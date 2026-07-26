@@ -1,0 +1,52 @@
+{
+  "name": "@joshuanode/n8n-nodes-autoelevate",
+  "version": "0.1.0",
+  "description": "n8n community node for the AutoElevate Partner API",
+  "license": "MIT",
+  "author": {
+    "name": "Joshua Smith",
+    "email": "ajoshuasmith@users.noreply.github.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ajoshuasmith/n8n-nodes-autoelevate.git"
+  },
+  "homepage": "https://github.com/ajoshuasmith/n8n-nodes-autoelevate#readme",
+  "bugs": {
+    "url": "https://github.com/ajoshuasmith/n8n-nodes-autoelevate/issues"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
+  "publishConfig": { "access": "public" },
+  "engines": { "node": ">=18.17.0" },
+  "keywords": [
+    "n8n-community-node-package",
+    "n8n",
+    "autoelevate",
+    "privileged-access-management",
+    "endpoint-security",
+    "msp"
+  ],
+  "scripts": {
+    "build": "n8n-node build",
+    "dev": "n8n-node dev",
+    "lint": "n8n-node lint",
+    "lint:fix": "n8n-node lint --fix",
+    "release": "n8n-node release",
+    "test": "npm run build --silent && node --test test/*.test.mjs"
+  },
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "strict": true,
+    "credentials": ["dist/credentials/AutoElevateApi.credentials.js"],
+    "nodes": ["dist/nodes/AutoElevate/AutoElevate.node.js"]
+  },
+  "devDependencies": {
+    "@n8n/node-cli": "0.40.3",
+    "@types/node": "^24.1.0",
+    "n8n-workflow": "*",
+    "typescript": "^5.9.2"
+  },
+  "peerDependencies": { "n8n-workflow": "*" }
+}
