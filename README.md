@@ -49,6 +49,18 @@ npm install @joshuanode/n8n-nodes-autoelevate
 
 Restart n8n after installation if the node does not appear immediately.
 
+### Testing prereleases
+
+In a test n8n instance, open **Settings > Community Nodes > Install** and enter the exact version:
+
+```text
+@joshuanode/n8n-nodes-autoelevate@0.2.0-beta.1
+```
+
+The `next` tag selects the current testing release. n8n resolves a tag at installation time; it does not keep following that tag for later updates. Pin the exact version when reproducing a test result.
+
+Start with read operations and a narrowly scoped API key. Test changes to users, rules, and computer modes against disposable records before enabling them in scheduled workflows. Computer actions apply asynchronously, so confirm the reported state with **Computer: Get**.
+
 ## Prerequisites
 
 - An AutoElevate partner account with access to the Partner API
@@ -223,7 +235,7 @@ Bug reports, feature requests, and pull requests are welcome in the [GitHub repo
 
 ## Version History
 
-### 0.2.0
+### 0.2.0-beta.1
 
 - Added computer elevation-mode and technician-mode controls, plus agent uninstall and deletion
 - Added user management, company access settings, and role lookup
