@@ -18,9 +18,9 @@ An n8n community node for the [AutoElevate Partner API](https://partner-api-docs
 
 ## Features
 
-- Complete coverage of all endpoints published in the AutoElevate Partner API v1 specification
+- Operations for every endpoint in the Partner API v1 specification retrieved on 2026-10-27
 - API Token (`AE-BEARER`) and signed HMAC (`AE-HMAC-SHA256`) authentication
-- Searchable company, computer, location, elevated-session, and elevation-request selectors
+- Searchable company, computer, location, event, session, request, rule, user, role, and webhook selectors
 - Automatic offset and cursor pagination
 - Picker searches that scan all available API pages when AutoElevate has no server-side search parameter
 - Automatic `429` retries honoring `Retry-After`
@@ -82,13 +82,16 @@ AutoElevate displays secrets only once. Store them securely and revoke any key t
 | --- | --- | --- |
 | Audit Log | Get Many | Entity type, action, start, end |
 | Company | Get, Get Many | — |
-| Computer | Get, Get Many | Company, location |
+| Computer | Get, Get Many, Set Elevation Mode, Set Technician Mode, Delete | Company, location |
 | Elevated Session | Get, Get Many | Company, computer, status |
-| Elevation Event | Get Many | Company, start, end |
+| Elevation Event | Get, Get Many | Company, start, end |
 | Elevation Request | Approve, Deny, Get, Get Many | Company, approval state, start, end |
-| Elevation Rule | Get Many | Company |
+| Elevation Rule | Get, Get Many, Update, Delete | Company |
 | Location | Get, Get Many | Company |
+| Role | Get, Get Many | — |
 | Usage | Get | — |
+| User | Get, Get Many, Create, Update, Delete | — |
+| Webhook | Get, Get Many, Create, Update, Delete, Get Delivery Logs, Test | — |
 
 ## Example Workflows
 
@@ -124,9 +127,35 @@ Company: Select from list
 Return All: true
 ```
 
+## Computer actions
+
+**Set Elevation Mode** accepts `audit`, `live`, `policy`, or `inherit`. Inherit clears the computer override and restores its location, company, or MSP setting. **Set Technician Mode** turns technician mode on or off on supported Windows computers. Activity is attributed to the API token owner; use individual technician tokens when individual attribution is required.
+
+Changes apply on the next agent configuration check-in (4.5 minutes by default). The node returns the API response, including its pending state. An accepted response does not confirm activation. Use **Computer: Get** to confirm the reported `elevationMode`; technician mode reports `technicianBypass`.
+
+**Delete** queues agent uninstall and hides the computer record. It can reappear if the agent checks in before uninstalling. Elevation history and audit entries remain. Delete operations require **Confirm Deletion**.
+
+## Rule and user updates
+
+**Update Fields** sends only selected fields. Omitted fields stay unchanged, and boolean `false` is preserved. For elevation rules, an empty Friendly Name or Notes clears that field with `null`. Identification Criteria accepts a JSON object using the structure returned by **Get**; its internal shape is not part of the public API contract. Rule scope cannot be edited. New rules can be created through **Elevation Request: Approve/Deny** with **Create Rule**, but there is no standalone rule-create endpoint.
+
+**User: Create** creates human users. Service users must be created in the Admin Portal. Select a role and company access: all, none, selected companies only, or all except selected companies. On update, Company Access defaults to **Leave Unchanged**. Choosing another value replaces the complete access setting. Email and user kind cannot be changed through this API.
+
+For elevated-session approvals, set Duration to 1–60 minutes; Addigy-managed Macs require at least 10. Leaving Duration at 0 omits it, which is only suitable for other request types. **Deny** supports a reason shown to the end user. Just-in-Time Log In approvals still require the mobile app.
+
+## Webhooks
+
+**Webhook: Create** registers an HTTPS destination and event subscriptions. Native JSON deliveries carry HMAC signatures. Verify the timestamp and signature against the raw request body before processing, then deduplicate by `deliveryId`. Teams and Slack formats are unsigned. User events require a webhook scoped to all companies.
+
+Creation returns the signing secret once. Save it securely and account for n8n execution-data retention, because the creation response is node output. Later reads return only the destination URL origin and omit the secret. When updating, omit URL to preserve it; do not copy the redacted URL from Get. Adding an empty Company field to an update explicitly restores all-company scope.
+
+**Get Delivery Logs** returns the most recent attempts (up to 50). **Test** sends a real test delivery even if the webhook is disabled. A newly created webhook may briefly return 404 on subsequent calls; retry after it becomes visible. This package manages webhook subscriptions; use n8n's Webhook node to receive events.
+
 ## API Limits
 
-During beta, AutoElevate documents a default limit of 100 requests per hour for each MSP, HTTP method, and route path. **Get Many** uses pages of up to 200 records, so large result sets consume multiple requests. A `429` response includes a `Retry-After` value.
+The [Partner API reference](https://partner-api-docs.autoelevate.com/) documents a default limit of **20 requests per minute per MSP, HTTP method, and route path** (checked 2026-10-27). Capacity refills continuously, roughly one request every three seconds. Limits may change during beta; honor the server's `Retry-After` response.
+
+**Get Many** uses pages of up to 200 records, so large result sets consume multiple requests. A `429` response includes a `Retry-After` value.
 
 ## Error Handling and Troubleshooting
 
@@ -136,7 +165,9 @@ During beta, AutoElevate documents a default limit of 100 requests per hour for 
 | `401 Unauthorized` | Invalid, expired, or incorrectly configured API credentials | Confirm the selected authentication scheme and rotate the API key if needed |
 | `403 Forbidden` | The service user or API key lacks permission for the operation | Add the required API permission in AutoElevate or use a properly scoped service user |
 | `404 Not Found` | The record does not exist or is outside the partner account | Verify the selected company, computer, location, session, request, or rule |
-| `429 Too Many Requests` | The route-specific API limit has been reached | The node retries twice using `Retry-After`; reduce polling frequency if the limit persists |
+| `409 Conflict` | The resource state prevents this operation | Re-read the record; requests may already be resolved or multiple users may be signed in |
+| `422 Unprocessable Entity` | The target cannot apply the operation | Check platform support, agent state, session duration, and rule constraints |
+| `429 Too Many Requests` | The API rate limit has been reached | The node retries twice using `Retry-After`; reduce polling frequency or batch size if the limit persists |
 
 AutoElevate error messages and error codes are preserved in n8n when the API returns them. For example, a missing audit-log permission should surface AutoElevate's original authorization message rather than a generic request failure.
 
@@ -192,10 +223,20 @@ Bug reports, feature requests, and pull requests are welcome in the [GitHub repo
 
 ## Version History
 
+### 0.2.0
+
+- Added computer elevation-mode and technician-mode controls, plus agent uninstall and deletion
+- Added user management, company access settings, and role lookup
+- Added elevation rule get, update, and delete operations
+- Added webhook management, test deliveries, and delivery logs
+- Added individual elevation event lookup, denial reasons, withdrawn-request filtering, and rule audit filtering
+- Updated API limits and session-duration guidance
+- Added offline execution tests against the API contract retrieved on 2026-10-27
+
 ### 0.1.0
 
 - Initial public release
-- Complete coverage of the currently published AutoElevate Partner API v1 beta endpoints
+- Covered the AutoElevate Partner API v1 beta endpoints available at the initial release
 - Bearer and HMAC authentication
 - Searchable resource selectors, pagination, filtering, rate-limit retries, and preserved API errors
 

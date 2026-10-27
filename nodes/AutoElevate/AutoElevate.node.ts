@@ -22,13 +22,19 @@ import {
 	unwrapLocator,
 } from './GenericFunctions';
 import { autoElevateProperties } from './descriptions';
+import { executeManagement } from './ManagementFunctions';
 
 type ListResource =
 	| 'companies'
 	| 'computers'
 	| 'elevated-sessions'
 	| 'elevation-requests'
-	| 'locations';
+	| 'locations'
+	| 'elevation-events'
+	| 'elevation-rules'
+	| 'users'
+	| 'roles'
+	| 'webhooks';
 
 function dateToEpoch(value: string): number | undefined {
 	if (!value) return undefined;
@@ -55,13 +61,7 @@ async function getList(
 	const limit = returnAll
 		? Number.POSITIVE_INFINITY
 		: (context.getNodeParameter('limit', itemIndex) as number);
-	return autoElevateApiRequestAllItems.call(
-		context,
-		endpoint,
-		query,
-		cursorPagination,
-		limit,
-	);
+	return autoElevateApiRequestAllItems.call(context, endpoint, query, cursorPagination, limit);
 }
 
 async function searchResource(
@@ -78,7 +78,10 @@ async function searchResource(
 	const normalizedFilter = filter?.trim().toLowerCase();
 	let items: IDataObject[];
 	let hasMore = false;
-	if (normalizedFilter) {
+	if (resource === 'roles') {
+		const response = await autoElevateApiRequest.call(this, 'GET', '/api/v1/roles');
+		items = response.items as IDataObject[];
+	} else if (normalizedFilter) {
 		items = await autoElevateApiRequestAllItems.call(
 			this,
 			`/api/v1/${resource}`,
@@ -105,7 +108,17 @@ async function searchResource(
 	});
 	const results: INodeListSearchItems[] = items.map((item) => {
 		const id = String(item.id);
-		let name = String(item.name ?? item.machineName ?? item.targetDescription ?? id);
+		let name = String(
+			item.name ??
+				item.friendlyName ??
+				item.machineName ??
+				item.targetDescription ??
+				item.email ??
+				id,
+		);
+		if (resource === 'users')
+			name =
+				`${String(item.firstName ?? '')} ${String(item.lastName ?? '')} (${String(item.email ?? id)})`.trim();
 		if (resource === 'elevated-sessions') {
 			name = `${String(item.userName ?? 'Unknown user')} — ${String(item.status ?? '')} (${id})`;
 		}
@@ -131,7 +144,8 @@ export class AutoElevate implements INodeType {
 		group: ['transform'],
 		version: 1,
 		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
-		description: 'Access inventory, security events, elevation requests, and usage in AutoElevate',
+		description:
+			'Manage computers, elevation rules, users, webhooks, and security activity in AutoElevate',
 		defaults: { name: 'AutoElevate' },
 		inputs: [NodeConnectionTypes.Main],
 		outputs: [NodeConnectionTypes.Main],
@@ -165,7 +179,10 @@ export class AutoElevate implements INodeType {
 					{ name: 'Elevation Request', value: 'elevationRequest' },
 					{ name: 'Elevation Rule', value: 'elevationRule' },
 					{ name: 'Location', value: 'location' },
+					{ name: 'Role', value: 'role' },
 					{ name: 'Usage', value: 'usage' },
+					{ name: 'User', value: 'user' },
+					{ name: 'Webhook', value: 'webhook' },
 				],
 				default: 'elevationRequest',
 			},
@@ -181,7 +198,10 @@ export class AutoElevate implements INodeType {
 			): Promise<INodeCredentialTestResult> {
 				const credentials = credential.data;
 				if (!credentials) {
-					return { status: 'Error', message: 'AutoElevate credentials are incomplete' };
+					return {
+						status: 'Error',
+						message: 'AutoElevate credentials are incomplete',
+					};
 				}
 				const url = `${String(credentials.baseUrl).replace(/\/+$/, '')}/api/v1/usage`;
 				const headers: Record<string, string> = {
@@ -222,18 +242,10 @@ export class AutoElevate implements INodeType {
 			},
 		},
 		listSearch: {
-			searchCompanies(
-				this: ILoadOptionsFunctions,
-				filter?: string,
-				paginationToken?: string,
-			) {
+			searchCompanies(this: ILoadOptionsFunctions, filter?: string, paginationToken?: string) {
 				return searchResource.call(this, 'companies', filter, paginationToken);
 			},
-			searchComputers(
-				this: ILoadOptionsFunctions,
-				filter?: string,
-				paginationToken?: string,
-			) {
+			searchComputers(this: ILoadOptionsFunctions, filter?: string, paginationToken?: string) {
 				return searchResource.call(this, 'computers', filter, paginationToken);
 			},
 			searchElevatedSessions(
@@ -250,11 +262,31 @@ export class AutoElevate implements INodeType {
 			) {
 				return searchResource.call(this, 'elevation-requests', filter, paginationToken);
 			},
-			searchLocations(
+			searchElevationEvents(
 				this: ILoadOptionsFunctions,
 				filter?: string,
 				paginationToken?: string,
 			) {
+				return searchResource.call(this, 'elevation-events', filter, paginationToken);
+			},
+
+			searchElevationRules(this: ILoadOptionsFunctions, filter?: string, paginationToken?: string) {
+				return searchResource.call(this, 'elevation-rules', filter, paginationToken);
+			},
+
+			searchUsers(this: ILoadOptionsFunctions, filter?: string, paginationToken?: string) {
+				return searchResource.call(this, 'users', filter, paginationToken);
+			},
+
+			searchRoles(this: ILoadOptionsFunctions, filter?: string, paginationToken?: string) {
+				return searchResource.call(this, 'roles', filter, paginationToken);
+			},
+
+			searchWebhooks(this: ILoadOptionsFunctions, filter?: string, paginationToken?: string) {
+				return searchResource.call(this, 'webhooks', filter, paginationToken);
+			},
+
+			searchLocations(this: ILoadOptionsFunctions, filter?: string, paginationToken?: string) {
 				return searchResource.call(this, 'locations', filter, paginationToken);
 			},
 		},
@@ -270,7 +302,15 @@ export class AutoElevate implements INodeType {
 				const operation = this.getNodeParameter('operation', itemIndex) as string;
 				let response: IDataObject | IDataObject[];
 
-				if (resource === 'auditLog') {
+				if (
+					['user', 'role', 'webhook'].includes(resource) ||
+					(resource === 'computer' &&
+						['delete', 'setElevationMode', 'setTechnicianMode'].includes(operation)) ||
+					(resource === 'elevationRule' && operation !== 'getMany') ||
+					(resource === 'elevationEvent' && operation === 'get')
+				) {
+					response = await executeManagement(this, itemIndex, resource, operation);
+				} else if (resource === 'auditLog') {
 					const query: IDataObject = {
 						entityType: this.getNodeParameter('entityType', itemIndex, '') as string,
 						action: this.getNodeParameter('auditAction', itemIndex, '') as string,
@@ -331,17 +371,13 @@ export class AutoElevate implements INodeType {
 						if (createRule) {
 							body.ruleLevel = this.getNodeParameter('ruleLevel', itemIndex) as string;
 						}
+						if (operation === 'deny') {
+							const reason = this.getNodeParameter('denialReason', itemIndex, '') as string;
+							if (reason) body.denialReason = reason;
+						}
 						if (operation === 'approve') {
-							const elevationType = this.getNodeParameter(
-								'elevationType',
-								itemIndex,
-								'',
-							) as string;
-							const duration = this.getNodeParameter(
-								'durationInMinutes',
-								itemIndex,
-								0,
-							) as number;
+							const elevationType = this.getNodeParameter('elevationType', itemIndex, '') as string;
+							const duration = this.getNodeParameter('durationInMinutes', itemIndex, 0) as number;
 							if (elevationType) body.elevationType = elevationType;
 							if (duration > 0) body.durationInMinutes = duration;
 						}
@@ -356,11 +392,7 @@ export class AutoElevate implements INodeType {
 							start: dateToEpoch(this.getNodeParameter('start', itemIndex, '') as string),
 							end: dateToEpoch(this.getNodeParameter('end', itemIndex, '') as string),
 							companyId: optionalLocator(this, 'companyId', itemIndex),
-							approvalState: this.getNodeParameter(
-								'approvalState',
-								itemIndex,
-								'',
-							) as string,
+							approvalState: this.getNodeParameter('approvalState', itemIndex, '') as string,
 						});
 					}
 				} else if (resource === 'elevationRule') {
@@ -392,7 +424,9 @@ export class AutoElevate implements INodeType {
 			} catch (error) {
 				if (this.continueOnFail()) {
 					returnData.push({
-						json: { error: error instanceof Error ? error.message : String(error) },
+						json: {
+							error: error instanceof Error ? error.message : String(error),
+						},
 						pairedItem: { item: itemIndex },
 					});
 					continue;
@@ -402,7 +436,9 @@ export class AutoElevate implements INodeType {
 					// eslint-disable-next-line @n8n/community-nodes/require-node-api-error
 					throw error;
 				}
-				throw new NodeOperationError(this.getNode(), error as Error, { itemIndex });
+				throw new NodeOperationError(this.getNode(), error as Error, {
+					itemIndex,
+				});
 			}
 		}
 
