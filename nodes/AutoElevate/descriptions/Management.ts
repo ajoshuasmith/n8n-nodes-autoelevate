@@ -43,6 +43,9 @@ function toggle(displayName: string, name: string, description: string): INodePr
 function locator(displayName: string, name: string, search: string): INodeProperties {
 	const field = idLocator('', displayName, name, search);
 	delete field.displayOptions;
+	// Collection fields are optional until selected. A required locator here
+	// makes n8n reject unrelated resources before execution starts.
+	field.required = false;
 	return field;
 }
 

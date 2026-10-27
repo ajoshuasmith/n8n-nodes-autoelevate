@@ -54,7 +54,7 @@ Restart n8n after installation if the node does not appear immediately.
 In a test n8n instance, open **Settings > Community Nodes > Install** and enter the exact version:
 
 ```text
-@joshuanode/n8n-nodes-autoelevate@0.2.0-beta.1
+@joshuanode/n8n-nodes-autoelevate@0.2.0-beta.2
 ```
 
 The `next` tag selects the current testing release. n8n resolves a tag at installation time; it does not keep following that tag for later updates. Pin the exact version when reproducing a test result.
@@ -234,6 +234,11 @@ Bug reports, feature requests, and pull requests are welcome in the [GitHub repo
 - Do not include API keys, HMAC signing keys, customer names, computer names, or other sensitive tenant data in public issues.
 
 ## Version History
+
+### 0.2.0-beta.2
+
+- Fixed a required Role selector blocking unrelated operations before execution
+- Added regression tests using n8n's own parameter validation
 
 ### 0.2.0-beta.1
 
