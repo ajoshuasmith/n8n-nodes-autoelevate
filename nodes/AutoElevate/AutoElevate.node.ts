@@ -18,6 +18,7 @@ import {
 	autoElevateApiRequestAllItems,
 	createHmacAuthorization,
 	getAutoElevateErrorDetails,
+	getAutoElevateCancelSignal,
 	type AutoElevateListResponse,
 	unwrapLocator,
 } from './GenericFunctions';
@@ -297,6 +298,7 @@ export class AutoElevate implements INodeType {
 		const returnData: INodeExecutionData[] = [];
 
 		for (let itemIndex = 0; itemIndex < inputItems.length; itemIndex++) {
+			getAutoElevateCancelSignal(this)?.throwIfAborted();
 			try {
 				const resource = this.getNodeParameter('resource', itemIndex) as string;
 				const operation = this.getNodeParameter('operation', itemIndex) as string;
@@ -422,6 +424,7 @@ export class AutoElevate implements INodeType {
 					})),
 				);
 			} catch (error) {
+				getAutoElevateCancelSignal(this)?.throwIfAborted();
 				if (this.continueOnFail()) {
 					returnData.push({
 						json: {

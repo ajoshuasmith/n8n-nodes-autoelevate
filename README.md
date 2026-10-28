@@ -54,7 +54,7 @@ Restart n8n after installation if the node does not appear immediately.
 In a test n8n instance, open **Settings > Community Nodes > Install** and enter the exact version:
 
 ```text
-@joshuanode/n8n-nodes-autoelevate@0.2.0-beta.2
+@joshuanode/n8n-nodes-autoelevate@0.2.0-beta.3
 ```
 
 The `next` tag selects the current testing release. n8n resolves a tag at installation time; it does not keep following that tag for later updates. Pin the exact version when reproducing a test result.
@@ -159,7 +159,7 @@ For elevated-session approvals, set Duration to 1–60 minutes; Addigy-managed M
 
 **Webhook: Create** registers an HTTPS destination and event subscriptions. Native JSON deliveries carry HMAC signatures. Verify the timestamp and signature against the raw request body before processing, then deduplicate by `deliveryId`. Teams and Slack formats are unsigned. User events require a webhook scoped to all companies.
 
-Creation returns the signing secret once. Save it securely and account for n8n execution-data retention, because the creation response is node output. Later reads return only the destination URL origin and omit the secret. When updating, omit URL to preserve it; do not copy the redacted URL from Get. Adding an empty Company field to an update explicitly restores all-company scope.
+Creation returns `{ webhookConfiguration, secret }`; the new ID is at `webhookConfiguration.id`. Save the signing secret securely and account for n8n execution-data retention, because the creation response is node output. Later reads return only the destination URL origin and omit the secret. When updating, omit URL to preserve it; do not copy the redacted URL from Get. Adding an empty Company field to an update explicitly restores all-company scope.
 
 **Get Delivery Logs** returns the most recent attempts (up to 50). **Test** sends a real test delivery even if the webhook is disabled. A newly created webhook may briefly return 404 on subsequent calls; retry after it becomes visible. This package manages webhook subscriptions; use n8n's Webhook node to receive events.
 
@@ -168,6 +168,8 @@ Creation returns the signing secret once. Save it securely and account for n8n e
 The [Partner API reference](https://partner-api-docs.autoelevate.com/) documents a default limit of **20 requests per minute per MSP, HTTP method, and route path** (checked 2026-10-27). Capacity refills continuously, roughly one request every three seconds. Limits may change during beta; honor the server's `Retry-After` response.
 
 **Get Many** uses pages of up to 200 records, so large result sets consume multiple requests. A `429` response includes a `Retry-After` value.
+
+Canceling an execution stops further input items, pagination, and rate-limit retries. HTTP requests have a 30-second timeout. On older n8n versions that cannot abort an HTTP request, one request already in flight may finish after cancellation, but the node stops waiting and sends no further requests.
 
 ## Error Handling and Troubleshooting
 
@@ -234,6 +236,12 @@ Bug reports, feature requests, and pull requests are welcome in the [GitHub repo
 - Do not include API keys, HMAC signing keys, customer names, computer names, or other sensitive tenant data in public issues.
 
 ## Version History
+
+### 0.2.0-beta.3
+
+- Stop further API requests when an execution is canceled, including during rate-limit backoff
+- Limit individual HTTP requests to 30 seconds
+- Document the webhook creation response and its ID field
 
 ### 0.2.0-beta.2
 

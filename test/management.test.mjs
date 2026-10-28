@@ -59,6 +59,18 @@ function harness(
 	return { calls, context, run: () => node.execute.call(context) };
 }
 
+test('cancellation stops later input items even with Continue On Fail enabled', async () => {
+	const controller = new AbortController();
+	const canceled = new Error('Execution canceled');
+	const h = harness({ resource: 'user', operation: 'getMany', limit: 1 }, () => {
+		controller.abort(canceled);
+		return { items: [{ id }], totalCount: 1 };
+	}, 3, true);
+	h.context.getExecutionCancelSignal = () => controller.signal;
+	await assert.rejects(h.run(), (error) => error === canceled);
+	assert.equal(h.calls.length, 1);
+});
+
 // Each case exercises the public n8n node, including its dispatcher and transport.
 const cases = [
 	['auditLog', 'getMany', 'GET', '/api/v1/audit-logs'],
