@@ -1,0 +1,2118 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "AutoElevate Partner API (Beta)",
+    "version": "1.0.0"
+  },
+  "x-source": "https://partner-api-docs.autoelevate.com/openapi.json",
+  "x-retrieved": "2026-10-27",
+  "paths": {
+    "/api/v1/audit-logs": {
+      "get": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50,
+              "description": "Maximum number of items to return. Defaults to 50, capped at 200.",
+              "example": 50
+            },
+            "required": false,
+            "description": "Maximum number of items to return. Defaults to 50, capped at 200.",
+            "name": "take",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "description": "Opaque pagination cursor. Pass the `nextCursor` from a previous response to fetch the next page."
+            },
+            "required": false,
+            "description": "Opaque pagination cursor. Pass the `nextCursor` from a previous response to fetch the next page.",
+            "name": "cursor",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "rules",
+                "users",
+                "settings"
+              ],
+              "description": "Audited entity type to filter by. The feed covers elevation rule, user and setting changes."
+            },
+            "required": false,
+            "description": "Audited entity type to filter by. The feed covers elevation rule, user and setting changes.",
+            "name": "entityType",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "created",
+                "updated",
+                "deleted"
+              ],
+              "description": "Filter by action verb."
+            },
+            "required": false,
+            "description": "Filter by action verb.",
+            "name": "action",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0,
+              "description": "Inclusive start of the date range, epoch milliseconds. Optional; when omitted, each endpoint applies its own default lower bound (see the endpoint description).",
+              "example": 1716800000000
+            },
+            "required": false,
+            "description": "Inclusive start of the date range, epoch milliseconds. Optional; when omitted, each endpoint applies its own default lower bound (see the endpoint description).",
+            "name": "start",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0,
+              "description": "Inclusive end of the date range, epoch milliseconds. Optional; when omitted, each endpoint applies its own default upper bound (see the endpoint description).",
+              "example": 1716900000000
+            },
+            "required": false,
+            "description": "Inclusive end of the date range, epoch milliseconds. Optional; when omitted, each endpoint applies its own default upper bound (see the endpoint description).",
+            "name": "end",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "i-understand-this-is-beta-and-may-change"
+              ],
+              "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+              "example": "i-understand-this-is-beta-and-may-change"
+            },
+            "required": true,
+            "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+            "name": "X-Acknowledgment",
+            "in": "header"
+          }
+        ]
+      }
+    },
+    "/api/v1/companies": {
+      "get": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50,
+              "description": "Maximum number of items to return. Defaults to 50, capped at 200.",
+              "example": 50
+            },
+            "required": false,
+            "description": "Maximum number of items to return. Defaults to 50, capped at 200.",
+            "name": "take",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0,
+              "default": 0,
+              "description": "Number of items to skip for pagination.",
+              "example": 0
+            },
+            "required": false,
+            "description": "Number of items to skip for pagination.",
+            "name": "skip",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "i-understand-this-is-beta-and-may-change"
+              ],
+              "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+              "example": "i-understand-this-is-beta-and-may-change"
+            },
+            "required": true,
+            "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+            "name": "X-Acknowledgment",
+            "in": "header"
+          }
+        ]
+      }
+    },
+    "/api/v1/companies/{id}": {
+      "get": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Company identifier.",
+              "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+            },
+            "required": true,
+            "description": "Company identifier.",
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "i-understand-this-is-beta-and-may-change"
+              ],
+              "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+              "example": "i-understand-this-is-beta-and-may-change"
+            },
+            "required": true,
+            "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+            "name": "X-Acknowledgment",
+            "in": "header"
+          }
+        ]
+      }
+    },
+    "/api/v1/computers": {
+      "get": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50,
+              "description": "Maximum number of items to return. Defaults to 50, capped at 200.",
+              "example": 50
+            },
+            "required": false,
+            "description": "Maximum number of items to return. Defaults to 50, capped at 200.",
+            "name": "take",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0,
+              "default": 0,
+              "description": "Number of items to skip for pagination.",
+              "example": 0
+            },
+            "required": false,
+            "description": "Number of items to skip for pagination.",
+            "name": "skip",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Scope results to a single company managed by the authenticated partner. Omit to return data across all companies the partner has access to.",
+              "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+            },
+            "required": false,
+            "description": "Scope results to a single company managed by the authenticated partner. Omit to return data across all companies the partner has access to.",
+            "name": "companyId",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Scope results to a single location.",
+              "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+            },
+            "required": false,
+            "description": "Scope results to a single location.",
+            "name": "locationId",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "i-understand-this-is-beta-and-may-change"
+              ],
+              "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+              "example": "i-understand-this-is-beta-and-may-change"
+            },
+            "required": true,
+            "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+            "name": "X-Acknowledgment",
+            "in": "header"
+          }
+        ]
+      }
+    },
+    "/api/v1/computers/{id}": {
+      "get": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Computer identifier.",
+              "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+            },
+            "required": true,
+            "description": "Computer identifier.",
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "i-understand-this-is-beta-and-may-change"
+              ],
+              "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+              "example": "i-understand-this-is-beta-and-may-change"
+            },
+            "required": true,
+            "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+            "name": "X-Acknowledgment",
+            "in": "header"
+          }
+        ]
+      },
+      "delete": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Computer identifier.",
+              "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+            },
+            "required": true,
+            "description": "Computer identifier.",
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "i-understand-this-is-beta-and-may-change"
+              ],
+              "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+              "example": "i-understand-this-is-beta-and-may-change"
+            },
+            "required": true,
+            "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+            "name": "X-Acknowledgment",
+            "in": "header"
+          }
+        ]
+      }
+    },
+    "/api/v1/computers/{id}/technician-mode": {
+      "post": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Computer identifier.",
+              "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+            },
+            "required": true,
+            "description": "Computer identifier.",
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "i-understand-this-is-beta-and-may-change"
+              ],
+              "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+              "example": "i-understand-this-is-beta-and-may-change"
+            },
+            "required": true,
+            "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+            "name": "X-Acknowledgment",
+            "in": "header"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetTechnicianModePayload"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/computers/{id}/elevation-mode": {
+      "post": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Computer identifier.",
+              "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+            },
+            "required": true,
+            "description": "Computer identifier.",
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "i-understand-this-is-beta-and-may-change"
+              ],
+              "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+              "example": "i-understand-this-is-beta-and-may-change"
+            },
+            "required": true,
+            "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+            "name": "X-Acknowledgment",
+            "in": "header"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetElevationModePayload"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/elevated-sessions": {
+      "get": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50,
+              "description": "Maximum number of items to return. Defaults to 50, capped at 200.",
+              "example": 50
+            },
+            "required": false,
+            "description": "Maximum number of items to return. Defaults to 50, capped at 200.",
+            "name": "take",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0,
+              "default": 0,
+              "description": "Number of items to skip for pagination.",
+              "example": 0
+            },
+            "required": false,
+            "description": "Number of items to skip for pagination.",
+            "name": "skip",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Scope results to a single company managed by the authenticated partner. Omit to return data across all companies the partner has access to.",
+              "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+            },
+            "required": false,
+            "description": "Scope results to a single company managed by the authenticated partner. Omit to return data across all companies the partner has access to.",
+            "name": "companyId",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Scope results to a single computer.",
+              "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+            },
+            "required": false,
+            "description": "Scope results to a single computer.",
+            "name": "computerId",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "active",
+                "inactive"
+              ],
+              "description": "`active` returns currently running sessions; `inactive` returns every session that has ended (completed or expired)."
+            },
+            "required": false,
+            "description": "`active` returns currently running sessions; `inactive` returns every session that has ended (completed or expired).",
+            "name": "status",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "i-understand-this-is-beta-and-may-change"
+              ],
+              "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+              "example": "i-understand-this-is-beta-and-may-change"
+            },
+            "required": true,
+            "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+            "name": "X-Acknowledgment",
+            "in": "header"
+          }
+        ]
+      }
+    },
+    "/api/v1/elevated-sessions/{id}": {
+      "get": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Elevated-session identifier.",
+              "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+            },
+            "required": true,
+            "description": "Elevated-session identifier.",
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "i-understand-this-is-beta-and-may-change"
+              ],
+              "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+              "example": "i-understand-this-is-beta-and-may-change"
+            },
+            "required": true,
+            "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+            "name": "X-Acknowledgment",
+            "in": "header"
+          }
+        ]
+      }
+    },
+    "/api/v1/elevation-events": {
+      "get": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50,
+              "description": "Maximum number of items to return. Defaults to 50, capped at 200.",
+              "example": 50
+            },
+            "required": false,
+            "description": "Maximum number of items to return. Defaults to 50, capped at 200.",
+            "name": "take",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0,
+              "default": 0,
+              "description": "Number of items to skip for pagination.",
+              "example": 0
+            },
+            "required": false,
+            "description": "Number of items to skip for pagination.",
+            "name": "skip",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0,
+              "description": "Inclusive start of the date range, epoch milliseconds. Optional; when omitted, each endpoint applies its own default lower bound (see the endpoint description).",
+              "example": 1716800000000
+            },
+            "required": false,
+            "description": "Inclusive start of the date range, epoch milliseconds. Optional; when omitted, each endpoint applies its own default lower bound (see the endpoint description).",
+            "name": "start",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0,
+              "description": "Inclusive end of the date range, epoch milliseconds. Optional; when omitted, each endpoint applies its own default upper bound (see the endpoint description).",
+              "example": 1716900000000
+            },
+            "required": false,
+            "description": "Inclusive end of the date range, epoch milliseconds. Optional; when omitted, each endpoint applies its own default upper bound (see the endpoint description).",
+            "name": "end",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Scope results to a single company managed by the authenticated partner. Omit to return data across all companies the partner has access to.",
+              "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+            },
+            "required": false,
+            "description": "Scope results to a single company managed by the authenticated partner. Omit to return data across all companies the partner has access to.",
+            "name": "companyId",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "i-understand-this-is-beta-and-may-change"
+              ],
+              "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+              "example": "i-understand-this-is-beta-and-may-change"
+            },
+            "required": true,
+            "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+            "name": "X-Acknowledgment",
+            "in": "header"
+          }
+        ]
+      }
+    },
+    "/api/v1/elevation-events/{id}": {
+      "get": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Elevation event identifier.",
+              "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+            },
+            "required": true,
+            "description": "Elevation event identifier.",
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "i-understand-this-is-beta-and-may-change"
+              ],
+              "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+              "example": "i-understand-this-is-beta-and-may-change"
+            },
+            "required": true,
+            "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+            "name": "X-Acknowledgment",
+            "in": "header"
+          }
+        ]
+      }
+    },
+    "/api/v1/elevation-requests": {
+      "get": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50,
+              "description": "Maximum number of items to return. Defaults to 50, capped at 200.",
+              "example": 50
+            },
+            "required": false,
+            "description": "Maximum number of items to return. Defaults to 50, capped at 200.",
+            "name": "take",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0,
+              "default": 0,
+              "description": "Number of items to skip for pagination.",
+              "example": 0
+            },
+            "required": false,
+            "description": "Number of items to skip for pagination.",
+            "name": "skip",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0,
+              "description": "Inclusive start of the date range, epoch milliseconds. Optional; when omitted, each endpoint applies its own default lower bound (see the endpoint description).",
+              "example": 1716800000000
+            },
+            "required": false,
+            "description": "Inclusive start of the date range, epoch milliseconds. Optional; when omitted, each endpoint applies its own default lower bound (see the endpoint description).",
+            "name": "start",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0,
+              "description": "Inclusive end of the date range, epoch milliseconds. Optional; when omitted, each endpoint applies its own default upper bound (see the endpoint description).",
+              "example": 1716900000000
+            },
+            "required": false,
+            "description": "Inclusive end of the date range, epoch milliseconds. Optional; when omitted, each endpoint applies its own default upper bound (see the endpoint description).",
+            "name": "end",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Scope results to a single company managed by the authenticated partner. Omit to return data across all companies the partner has access to.",
+              "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+            },
+            "required": false,
+            "description": "Scope results to a single company managed by the authenticated partner. Omit to return data across all companies the partner has access to.",
+            "name": "companyId",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "PENDING",
+                "APPROVED",
+                "DENIED",
+                "WITHDRAWN"
+              ],
+              "description": "Current approval state of the request."
+            },
+            "required": false,
+            "description": "Current approval state of the request.",
+            "name": "approvalState",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "i-understand-this-is-beta-and-may-change"
+              ],
+              "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+              "example": "i-understand-this-is-beta-and-may-change"
+            },
+            "required": true,
+            "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+            "name": "X-Acknowledgment",
+            "in": "header"
+          }
+        ]
+      }
+    },
+    "/api/v1/elevation-requests/{id}": {
+      "get": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Elevation-request id.",
+              "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+            },
+            "required": true,
+            "description": "Elevation-request id.",
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "i-understand-this-is-beta-and-may-change"
+              ],
+              "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+              "example": "i-understand-this-is-beta-and-may-change"
+            },
+            "required": true,
+            "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+            "name": "X-Acknowledgment",
+            "in": "header"
+          }
+        ]
+      }
+    },
+    "/api/v1/elevation-requests/{id}/approve": {
+      "post": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Elevation-request id.",
+              "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+            },
+            "required": true,
+            "description": "Elevation-request id.",
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "i-understand-this-is-beta-and-may-change"
+              ],
+              "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+              "example": "i-understand-this-is-beta-and-may-change"
+            },
+            "required": true,
+            "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+            "name": "X-Acknowledgment",
+            "in": "header"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApproveElevationRequestPayload"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/elevation-requests/{id}/deny": {
+      "post": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Elevation-request id.",
+              "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+            },
+            "required": true,
+            "description": "Elevation-request id.",
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "i-understand-this-is-beta-and-may-change"
+              ],
+              "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+              "example": "i-understand-this-is-beta-and-may-change"
+            },
+            "required": true,
+            "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+            "name": "X-Acknowledgment",
+            "in": "header"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DenyElevationRequestPayload"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/elevation-rules": {
+      "get": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50,
+              "description": "Maximum number of items to return. Defaults to 50, capped at 200.",
+              "example": 50
+            },
+            "required": false,
+            "description": "Maximum number of items to return. Defaults to 50, capped at 200.",
+            "name": "take",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0,
+              "default": 0,
+              "description": "Number of items to skip for pagination.",
+              "example": 0
+            },
+            "required": false,
+            "description": "Number of items to skip for pagination.",
+            "name": "skip",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Scope results to a single company managed by the authenticated partner. Omit to return data across all companies the partner has access to.",
+              "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+            },
+            "required": false,
+            "description": "Scope results to a single company managed by the authenticated partner. Omit to return data across all companies the partner has access to.",
+            "name": "companyId",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "i-understand-this-is-beta-and-may-change"
+              ],
+              "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+              "example": "i-understand-this-is-beta-and-may-change"
+            },
+            "required": true,
+            "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+            "name": "X-Acknowledgment",
+            "in": "header"
+          }
+        ]
+      }
+    },
+    "/api/v1/elevation-rules/{id}": {
+      "get": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Elevation-rule id.",
+              "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+            },
+            "required": true,
+            "description": "Elevation-rule id.",
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "i-understand-this-is-beta-and-may-change"
+              ],
+              "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+              "example": "i-understand-this-is-beta-and-may-change"
+            },
+            "required": true,
+            "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+            "name": "X-Acknowledgment",
+            "in": "header"
+          }
+        ]
+      },
+      "patch": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Elevation-rule id.",
+              "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+            },
+            "required": true,
+            "description": "Elevation-rule id.",
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "i-understand-this-is-beta-and-may-change"
+              ],
+              "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+              "example": "i-understand-this-is-beta-and-may-change"
+            },
+            "required": true,
+            "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+            "name": "X-Acknowledgment",
+            "in": "header"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateElevationRulePayload"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Elevation-rule id.",
+              "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+            },
+            "required": true,
+            "description": "Elevation-rule id.",
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "i-understand-this-is-beta-and-may-change"
+              ],
+              "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+              "example": "i-understand-this-is-beta-and-may-change"
+            },
+            "required": true,
+            "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+            "name": "X-Acknowledgment",
+            "in": "header"
+          }
+        ]
+      }
+    },
+    "/api/v1/locations": {
+      "get": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50,
+              "description": "Maximum number of items to return. Defaults to 50, capped at 200.",
+              "example": 50
+            },
+            "required": false,
+            "description": "Maximum number of items to return. Defaults to 50, capped at 200.",
+            "name": "take",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0,
+              "default": 0,
+              "description": "Number of items to skip for pagination.",
+              "example": 0
+            },
+            "required": false,
+            "description": "Number of items to skip for pagination.",
+            "name": "skip",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Scope results to a single company managed by the authenticated partner. Omit to return data across all companies the partner has access to.",
+              "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+            },
+            "required": false,
+            "description": "Scope results to a single company managed by the authenticated partner. Omit to return data across all companies the partner has access to.",
+            "name": "companyId",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "i-understand-this-is-beta-and-may-change"
+              ],
+              "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+              "example": "i-understand-this-is-beta-and-may-change"
+            },
+            "required": true,
+            "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+            "name": "X-Acknowledgment",
+            "in": "header"
+          }
+        ]
+      }
+    },
+    "/api/v1/locations/{id}": {
+      "get": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Location identifier.",
+              "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+            },
+            "required": true,
+            "description": "Location identifier.",
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "i-understand-this-is-beta-and-may-change"
+              ],
+              "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+              "example": "i-understand-this-is-beta-and-may-change"
+            },
+            "required": true,
+            "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+            "name": "X-Acknowledgment",
+            "in": "header"
+          }
+        ]
+      }
+    },
+    "/api/v1/roles": {
+      "get": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "i-understand-this-is-beta-and-may-change"
+              ],
+              "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+              "example": "i-understand-this-is-beta-and-may-change"
+            },
+            "required": true,
+            "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+            "name": "X-Acknowledgment",
+            "in": "header"
+          }
+        ]
+      }
+    },
+    "/api/v1/roles/{id}": {
+      "get": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Role identifier.",
+              "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+            },
+            "required": true,
+            "description": "Role identifier.",
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "i-understand-this-is-beta-and-may-change"
+              ],
+              "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+              "example": "i-understand-this-is-beta-and-may-change"
+            },
+            "required": true,
+            "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+            "name": "X-Acknowledgment",
+            "in": "header"
+          }
+        ]
+      }
+    },
+    "/api/v1/usage": {
+      "get": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "i-understand-this-is-beta-and-may-change"
+              ],
+              "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+              "example": "i-understand-this-is-beta-and-may-change"
+            },
+            "required": true,
+            "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+            "name": "X-Acknowledgment",
+            "in": "header"
+          }
+        ]
+      }
+    },
+    "/api/v1/users": {
+      "get": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50,
+              "description": "Maximum number of items to return. Defaults to 50, capped at 200.",
+              "example": 50
+            },
+            "required": false,
+            "description": "Maximum number of items to return. Defaults to 50, capped at 200.",
+            "name": "take",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0,
+              "default": 0,
+              "description": "Number of items to skip for pagination.",
+              "example": 0
+            },
+            "required": false,
+            "description": "Number of items to skip for pagination.",
+            "name": "skip",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "i-understand-this-is-beta-and-may-change"
+              ],
+              "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+              "example": "i-understand-this-is-beta-and-may-change"
+            },
+            "required": true,
+            "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+            "name": "X-Acknowledgment",
+            "in": "header"
+          }
+        ]
+      },
+      "post": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "i-understand-this-is-beta-and-may-change"
+              ],
+              "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+              "example": "i-understand-this-is-beta-and-may-change"
+            },
+            "required": true,
+            "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+            "name": "X-Acknowledgment",
+            "in": "header"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserPayload"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/users/{id}": {
+      "get": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "description": "User identifier.",
+              "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+            },
+            "required": true,
+            "description": "User identifier.",
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "i-understand-this-is-beta-and-may-change"
+              ],
+              "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+              "example": "i-understand-this-is-beta-and-may-change"
+            },
+            "required": true,
+            "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+            "name": "X-Acknowledgment",
+            "in": "header"
+          }
+        ]
+      },
+      "patch": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "description": "User identifier.",
+              "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+            },
+            "required": true,
+            "description": "User identifier.",
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "i-understand-this-is-beta-and-may-change"
+              ],
+              "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+              "example": "i-understand-this-is-beta-and-may-change"
+            },
+            "required": true,
+            "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+            "name": "X-Acknowledgment",
+            "in": "header"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserPayload"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "description": "User identifier.",
+              "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+            },
+            "required": true,
+            "description": "User identifier.",
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "i-understand-this-is-beta-and-may-change"
+              ],
+              "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+              "example": "i-understand-this-is-beta-and-may-change"
+            },
+            "required": true,
+            "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+            "name": "X-Acknowledgment",
+            "in": "header"
+          }
+        ]
+      }
+    },
+    "/api/v1/webhooks": {
+      "get": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 200,
+              "default": 50,
+              "description": "Maximum number of items to return. Defaults to 50, capped at 200.",
+              "example": 50
+            },
+            "required": false,
+            "description": "Maximum number of items to return. Defaults to 50, capped at 200.",
+            "name": "take",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 0,
+              "default": 0,
+              "description": "Number of items to skip for pagination.",
+              "example": 0
+            },
+            "required": false,
+            "description": "Number of items to skip for pagination.",
+            "name": "skip",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "i-understand-this-is-beta-and-may-change"
+              ],
+              "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+              "example": "i-understand-this-is-beta-and-may-change"
+            },
+            "required": true,
+            "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+            "name": "X-Acknowledgment",
+            "in": "header"
+          }
+        ]
+      },
+      "post": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "i-understand-this-is-beta-and-may-change"
+              ],
+              "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+              "example": "i-understand-this-is-beta-and-may-change"
+            },
+            "required": true,
+            "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+            "name": "X-Acknowledgment",
+            "in": "header"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateWebhookPayload"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/webhooks/{id}": {
+      "get": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Webhook configuration identifier.",
+              "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+            },
+            "required": true,
+            "description": "Webhook configuration identifier.",
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "i-understand-this-is-beta-and-may-change"
+              ],
+              "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+              "example": "i-understand-this-is-beta-and-may-change"
+            },
+            "required": true,
+            "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+            "name": "X-Acknowledgment",
+            "in": "header"
+          }
+        ]
+      },
+      "patch": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Webhook configuration identifier.",
+              "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+            },
+            "required": true,
+            "description": "Webhook configuration identifier.",
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "i-understand-this-is-beta-and-may-change"
+              ],
+              "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+              "example": "i-understand-this-is-beta-and-may-change"
+            },
+            "required": true,
+            "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+            "name": "X-Acknowledgment",
+            "in": "header"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateWebhookPayload"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Webhook configuration identifier.",
+              "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+            },
+            "required": true,
+            "description": "Webhook configuration identifier.",
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "i-understand-this-is-beta-and-may-change"
+              ],
+              "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+              "example": "i-understand-this-is-beta-and-may-change"
+            },
+            "required": true,
+            "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+            "name": "X-Acknowledgment",
+            "in": "header"
+          }
+        ]
+      }
+    },
+    "/api/v1/webhooks/{id}/delivery-logs": {
+      "get": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Webhook configuration identifier.",
+              "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+            },
+            "required": true,
+            "description": "Webhook configuration identifier.",
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "i-understand-this-is-beta-and-may-change"
+              ],
+              "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+              "example": "i-understand-this-is-beta-and-may-change"
+            },
+            "required": true,
+            "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+            "name": "X-Acknowledgment",
+            "in": "header"
+          }
+        ]
+      }
+    },
+    "/api/v1/webhooks/{id}/test": {
+      "post": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Webhook configuration identifier.",
+              "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+            },
+            "required": true,
+            "description": "Webhook configuration identifier.",
+            "name": "id",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "i-understand-this-is-beta-and-may-change"
+              ],
+              "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+              "example": "i-understand-this-is-beta-and-may-change"
+            },
+            "required": true,
+            "description": "Beta acknowledgment. Must be sent verbatim on every request. The Partner API is in beta and may change without notice; this header is your explicit acknowledgment of that.",
+            "name": "X-Acknowledgment",
+            "in": "header"
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ApproveElevationRequestPayload": {
+        "type": "object",
+        "properties": {
+          "elevationType": {
+            "type": "string",
+            "enum": [
+              "admin",
+              "user"
+            ],
+            "description": "Elevation level granted for the approval. `admin` performs the elevation with admin rights; `user` keeps the action at the user level. Optional \u2014 defaults to the request's existing elevation type. Ignored for Technician Mode and Just-in-Time Log In requests."
+          },
+          "createRule": {
+            "type": "boolean",
+            "description": "When `true`, also create an auto-approval rule from this request so future matching elevations resolve automatically. Requires `ruleLevel`. Ignored for Technician Mode and Just-in-Time Log In requests."
+          },
+          "ruleLevel": {
+            "type": "string",
+            "enum": [
+              "msp",
+              "company",
+              "location",
+              "computer"
+            ],
+            "description": "Scope at which an auto-created rule applies: `computer`, `location`, `company`, or `msp` (all companies). Required when `createRule` is `true`."
+          },
+          "durationInMinutes": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 60,
+            "description": "Length of the resulting session in minutes. Required when the request is an elevated-session request \u2014 omitting it answers 422. Ignored for every other request type. A value outside 1 to 60 answers 400. An Addigy-managed Mac raises the floor to 10, and a value under it answers 422, because only the request says which provider runs the session."
+          }
+        },
+        "additionalProperties": false
+      },
+      "CompanyAccessInput": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "all"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ],
+            "additionalProperties": false,
+            "description": "Every company in the MSP."
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "none"
+                ]
+              }
+            },
+            "required": [
+              "type"
+            ],
+            "additionalProperties": false,
+            "description": "No companies."
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "some"
+                ]
+              },
+              "companyIds": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "A UUID identifier.",
+                  "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+                },
+                "minItems": 1,
+                "description": "Allow-list: the only companies this user can see."
+              }
+            },
+            "required": [
+              "type",
+              "companyIds"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "most"
+                ]
+              },
+              "companyIds": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "A UUID identifier.",
+                  "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+                },
+                "minItems": 1,
+                "description": "Deny-list: every company in the MSP except these."
+              }
+            },
+            "required": [
+              "type",
+              "companyIds"
+            ],
+            "additionalProperties": false
+          }
+        ],
+        "description": "Company access to write. `some` and `most` require a non-empty `companyIds`; `all` and `none` must not carry one. Every id must be a company of the authenticated partner's MSP that the token can access; any other id is answered with 404, as a resource in another tenant does not exist for this token."
+      },
+      "CreateUserPayload": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255,
+            "description": "Given name.",
+            "example": "Dana"
+          },
+          "lastName": {
+            "type": "string",
+            "maxLength": 255,
+            "default": "",
+            "description": "Family name. Optional; defaults to an empty string.",
+            "example": "Ellis"
+          },
+          "email": {
+            "type": "string",
+            "maxLength": 255,
+            "format": "email",
+            "description": "Sign-in address. Must be unique across the platform \u2014 a duplicate is rejected with 409.",
+            "example": "dana.ellis@example.com"
+          },
+          "roleId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Role to assign. Must be a role in the authenticated partner's MSP \u2014 see `GET /api/roles`.",
+            "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+          },
+          "companyAccess": {
+            "$ref": "#/components/schemas/CompanyAccessInput"
+          },
+          "technicianModeTicketingEnabled": {
+            "type": "boolean",
+            "default": false,
+            "description": "Whether the user may use technician-mode ticketing."
+          },
+          "sendInvitationEmail": {
+            "type": "boolean",
+            "default": true,
+            "description": "When `true` (the default), the platform emails the new user a link to set their initial password \u2014 without it they have no way to sign in. Set `false` to create the record silently and invite them later from the Admin Portal."
+          }
+        },
+        "required": [
+          "firstName",
+          "email",
+          "roleId",
+          "companyAccess"
+        ],
+        "additionalProperties": false
+      },
+      "CreateWebhookPayload": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255,
+            "description": "Human-readable label for this webhook.",
+            "example": "Teams approvals channel"
+          },
+          "url": {
+            "type": "string",
+            "maxLength": 2048,
+            "format": "uri",
+            "description": "HTTPS endpoint payloads are delivered to. A read returns this redacted to its origin, and that redacted form is not accepted here \u2014 send the full URL, or omit the field to keep the stored one.",
+            "example": "https://example.com/autoelevate/events"
+          },
+          "eventSubscriptions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WebhookEventType"
+            },
+            "minItems": 1,
+            "maxItems": 53,
+            "description": "Event types to subscribe to. At least one is required; duplicates are collapsed. The `user.*` events need an MSP-wide webhook (no `companyId`); combining them with a `companyId` is rejected."
+          },
+          "format": {
+            "$ref": "#/components/schemas/WebhookFormat"
+          },
+          "companyId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Scope the webhook to a single company. Omit to receive events for all of the MSP's companies. A company-scoped webhook is not re-pointed when that company is merged away or removed \u2014 re-scope or delete it as part of that change.",
+            "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+          }
+        },
+        "required": [
+          "name",
+          "url",
+          "eventSubscriptions"
+        ]
+      },
+      "DenyElevationRequestPayload": {
+        "type": "object",
+        "properties": {
+          "createRule": {
+            "type": "boolean",
+            "description": "When `true`, also create a denial rule from this request so future matching elevations are auto-denied. Requires `ruleLevel`. Ignored for Technician Mode and Just-in-Time Log In requests."
+          },
+          "ruleLevel": {
+            "type": "string",
+            "enum": [
+              "msp",
+              "company",
+              "location",
+              "computer"
+            ],
+            "description": "Scope at which an auto-created rule applies: `computer`, `location`, `company`, or `msp` (all companies). Required when `createRule` is `true`."
+          },
+          "denialReason": {
+            "type": "string",
+            "maxLength": 1000,
+            "description": "Free-text reason for the denial, shown to the end user on their machine alongside the denial notification. Plain text; maximum 1000 characters."
+          }
+        },
+        "additionalProperties": false
+      },
+      "EditableRuleElevationType": {
+        "type": "string",
+        "enum": [
+          "admin",
+          "user"
+        ],
+        "description": "Elevation level applied when this rule auto-approves a matching event. `admin` elevates with admin rights; `user` keeps the action at the user level."
+      },
+      "SetElevationModePayload": {
+        "type": "object",
+        "properties": {
+          "mode": {
+            "$ref": "#/components/schemas/SettableElevationMode"
+          }
+        },
+        "required": [
+          "mode"
+        ],
+        "additionalProperties": false
+      },
+      "SetTechnicianModePayload": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "description": "`true` queues technician mode on for the computer, `false` queues it off.",
+            "example": true
+          }
+        },
+        "required": [
+          "enabled"
+        ],
+        "additionalProperties": false
+      },
+      "SettableElevationMode": {
+        "type": "string",
+        "enum": [
+          "audit",
+          "live",
+          "policy",
+          "inherit"
+        ],
+        "description": "Elevation mode to apply on a computer: `audit`, `live` or `policy` \u2014 the same three the Admin Portal offers \u2014 or `inherit`, which drops the per-computer override so the computer follows the mode set at its location, company or MSP."
+      },
+      "UpdateElevationRulePayload": {
+        "type": "object",
+        "properties": {
+          "approved": {
+            "type": "boolean",
+            "description": "When `true`, matching elevations are auto-approved; when `false`, they are auto-denied."
+          },
+          "elevationType": {
+            "$ref": "#/components/schemas/EditableRuleElevationType"
+          },
+          "shouldIgnore": {
+            "type": "boolean",
+            "description": "When `true`, the agent treats matching events as audit-mode and does not prompt to elevate."
+          },
+          "friendlyName": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 255,
+            "description": "Human-readable name for the rule. Pass `null` to clear it."
+          },
+          "notes": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 255,
+            "description": "Free-text notes describing the rule. Pass `null` to clear it."
+          },
+          "identificationCriteria": {
+            "type": "object",
+            "description": "Opaque criteria the agent matches against incoming events to decide whether this rule applies. Shape is intentionally not part of the public contract \u2014 supply the same structure the read endpoint returns. Omit to leave the criteria unchanged; anything but an object (including `null`) is rejected because a rule needs criteria to match anything."
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateUserPayload": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255,
+            "description": "Given name."
+          },
+          "lastName": {
+            "type": "string",
+            "maxLength": 255,
+            "description": "Family name. Pass an empty string to clear it."
+          },
+          "roleId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Role to assign. Must be a role in the authenticated partner's MSP \u2014 see `GET /api/roles`.",
+            "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+          },
+          "companyAccess": {
+            "$ref": "#/components/schemas/CompanyAccessInput"
+          },
+          "technicianModeTicketingEnabled": {
+            "type": "boolean",
+            "description": "Whether the user may use technician-mode ticketing."
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateWebhookPayload": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255,
+            "description": "New label for this webhook."
+          },
+          "url": {
+            "type": "string",
+            "maxLength": 2048,
+            "format": "uri",
+            "description": "HTTPS endpoint payloads are delivered to. A read returns this redacted to its origin, and that redacted form is not accepted here \u2014 send the full URL, or omit the field to keep the stored one.",
+            "example": "https://example.com/autoelevate/events"
+          },
+          "eventSubscriptions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WebhookEventType"
+            },
+            "minItems": 1,
+            "maxItems": 53,
+            "description": "Replacement set of subscribed event types; duplicates are collapsed."
+          },
+          "format": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/WebhookFormat"
+              },
+              {
+                "description": "Change the delivery format for this webhook."
+              }
+            ]
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "Enable or disable deliveries for this webhook."
+          },
+          "companyId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uuid",
+            "description": "Re-scope the webhook to a company, or `null` to widen it to all of the MSP's companies. A company scope is rejected while the webhook subscribes to any `user.*` event.",
+            "example": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+          }
+        }
+      },
+      "WebhookEventType": {
+        "type": "string",
+        "enum": [
+          "request.created",
+          "request.approved",
+          "request.denied",
+          "request.duplicate.detected",
+          "session.created",
+          "session.completed",
+          "session.cancelled",
+          "agent-update.requested",
+          "agent-update.started",
+          "agent-update.completed",
+          "agent-update.failed",
+          "agent-update.download-failed",
+          "agent-update.verification-failed",
+          "computer.enrolled",
+          "computer.removed",
+          "computer.moved",
+          "computer.elevation-mode.changed",
+          "computer.auto-blocker-mode.changed",
+          "computer.technician-mode.changed",
+          "computer.admin-privileges.changed",
+          "computer.uac.changed",
+          "computer.restart-requested",
+          "computer.restarted",
+          "rule.created",
+          "rule.updated",
+          "rule.removed",
+          "alert.virus.detected",
+          "alert.execution.blocked",
+          "alert.execution.allowed",
+          "blocker-rule.created",
+          "blocker-rule.updated",
+          "blocker-rule.removed",
+          "blocker-event.converted-to-rule",
+          "technician-session.started",
+          "technician-session.authenticated",
+          "technician-session.time-started",
+          "technician-session.time-ended",
+          "os-login.requested",
+          "os-login.authenticated",
+          "technician-mode.bypassed",
+          "company.created",
+          "company.updated",
+          "company.removed",
+          "company.merged",
+          "location.created",
+          "location.updated",
+          "location.removed",
+          "location.merged",
+          "user.created",
+          "user.updated",
+          "user.removed",
+          "user.2fa.reset",
+          "user.password.reset"
+        ],
+        "description": "An event type a webhook can subscribe to. The `test` type is never subscribable \u2014 it is reserved for deliveries triggered via the test endpoint.",
+        "example": "request.created"
+      },
+      "WebhookFormat": {
+        "type": "string",
+        "enum": [
+          "native",
+          "teams-incoming-webhook",
+          "slack-incoming-webhook"
+        ],
+        "description": "How the payload is delivered. `native` sends the signed `WebhookEventEnvelope` JSON. `teams-incoming-webhook` sends an Adaptive Card for a Microsoft Teams inbound webhook (point it at a Power Automate Workflows URL). `slack-incoming-webhook` sends a Block Kit message for a Slack inbound webhook. Only `native` carries an `X-AutoElevate-Signature` \u2014 Teams and Slack cannot verify it.",
+        "example": "native"
+      }
+    }
+  }
+}
