@@ -22,6 +22,54 @@ export interface AutoElevateListResponse {
 type AutoElevateContext = IExecuteFunctions | ILoadOptionsFunctions;
 type UnknownRecord = Record<string, unknown>;
 
+export function getAutoElevateCancelSignal(context: AutoElevateContext): AbortSignal | undefined {
+	return 'getExecutionCancelSignal' in context
+		? context.getExecutionCancelSignal()
+		: undefined;
+}
+
+async function withCancellation<T>(response: Promise<T>, signal?: AbortSignal): Promise<T> {
+	if (!signal) return response;
+	return new Promise((resolve, reject) => {
+		const onAbort = () => {
+			signal.removeEventListener('abort', onAbort);
+			reject(signal.reason);
+		};
+		signal.addEventListener('abort', onAbort, { once: true });
+		response.then(
+			(value) => {
+				signal.removeEventListener('abort', onAbort);
+				resolve(value);
+			},
+			(error: unknown) => {
+				signal.removeEventListener('abort', onAbort);
+				reject(error);
+			},
+		);
+		if (signal.aborted) onAbort();
+	});
+}
+
+async function waitForRetry(ms: number, signal?: AbortSignal): Promise<void> {
+	if (!signal) return sleep(ms);
+	signal.throwIfAborted();
+	return new Promise((resolve, reject) => {
+		const onAbort = () => {
+			// n8n 2.36's sleep cannot cancel its timer; clear it when the execution stops.
+			// eslint-disable-next-line @n8n/community-nodes/no-restricted-globals
+			clearTimeout(timer);
+			reject(signal.reason);
+		};
+		// eslint-disable-next-line @n8n/community-nodes/no-restricted-globals
+		const timer = setTimeout(() => {
+			signal.removeEventListener('abort', onAbort);
+			resolve();
+		}, ms);
+		signal.addEventListener('abort', onAbort, { once: true });
+		if (signal.aborted) onAbort();
+	});
+}
+
 export interface AutoElevateErrorDetails {
 	statusCode: number;
 	responseBody: JsonObject;
@@ -122,11 +170,14 @@ export async function autoElevateApiRequest(
 	body: IDataObject = {},
 	query: IDataObject = {},
 ): Promise<IDataObject> {
+	const signal = getAutoElevateCancelSignal(this);
+	signal?.throwIfAborted();
 	const credentials = await this.getCredentials('autoElevateApi');
 	const url = buildUrl(String(credentials.baseUrl), endpoint, query);
 	const hasBody = Object.keys(body).length > 0;
 	const serializedBody = hasBody ? JSON.stringify(body) : '';
 	for (let attempt = 0; attempt <= 2; attempt++) {
+		signal?.throwIfAborted();
 		const headers: Record<string, string> = {
 			Accept: 'application/json',
 			'X-Acknowledgment': ACKNOWLEDGMENT,
@@ -145,18 +196,24 @@ export async function autoElevateApiRequest(
 			headers.Authorization = `Bearer ${String(credentials.apiToken)}`;
 		}
 
-		const options: IHttpRequestOptions = { method, url, headers, json: true };
+		const options: IHttpRequestOptions = {
+			method, url, headers, json: true, timeout: 30_000,
+			...(signal ? { abortSignal: signal } : {}),
+		};
 		if (hasBody) options.body = serializedBody;
 
 		try {
 			// AutoElevate's HMAC scheme signs the exact URL and body bytes, which
 			// cannot be expressed with n8n's declarative credential authentication.
+			// Older n8n helpers ignore abortSignal. Stop awaiting on cancellation as
+			// well; the timeout bounds that one in-flight request on those versions.
 			// eslint-disable-next-line @n8n/community-nodes/no-http-request-with-manual-auth
-			return (await this.helpers.httpRequest(options)) as IDataObject;
+			return (await withCancellation(this.helpers.httpRequest(options), signal)) as IDataObject;
 		} catch (error) {
+			signal?.throwIfAborted();
 			const details = getAutoElevateErrorDetails(error);
 			if (details.statusCode === 429 && attempt < 2) {
-				await sleep(parseRetryAfterMs(details.retryAfter));
+				await waitForRetry(parseRetryAfterMs(details.retryAfter), signal);
 				continue;
 			}
 			const messages: Record<number, string> = {

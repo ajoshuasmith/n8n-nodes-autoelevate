@@ -1,4 +1,5 @@
 import type { INodeProperties } from 'n8n-workflow';
+import { computerOperations, managementProperties, ruleOperations } from './Management';
 import {
 	companyFilter,
 	dateRangeFields,
@@ -27,10 +28,13 @@ export const autoElevateProperties: INodeProperties[] = [
 		default: '',
 		options: [
 			{ name: 'All', value: '' },
+			{ name: 'Rules', value: 'rules' },
 			{ name: 'Settings', value: 'settings' },
 			{ name: 'Users', value: 'users' },
 		],
-		displayOptions: { show: { resource: ['auditLog'], operation: ['getMany'] } },
+		displayOptions: {
+			show: { resource: ['auditLog'], operation: ['getMany'] },
+		},
 	},
 	{
 		displayName: 'Action',
@@ -43,7 +47,9 @@ export const autoElevateProperties: INodeProperties[] = [
 			{ name: 'Updated', value: 'updated' },
 			{ name: 'Deleted', value: 'deleted' },
 		],
-		displayOptions: { show: { resource: ['auditLog'], operation: ['getMany'] } },
+		displayOptions: {
+			show: { resource: ['auditLog'], operation: ['getMany'] },
+		},
 	},
 	...paginationFields('auditLog'),
 
@@ -51,15 +57,22 @@ export const autoElevateProperties: INodeProperties[] = [
 	idLocator('company', 'Company', 'companyId', 'searchCompanies'),
 	...paginationFields('company'),
 
-	getAndListOperations('computer'),
-	idLocator('computer', 'Computer', 'computerId', 'searchComputers'),
+	computerOperations,
+	idLocator('computer', 'Computer', 'computerId', 'searchComputers', [
+		'get',
+		'delete',
+		'setElevationMode',
+		'setTechnicianMode',
+	]),
 	companyFilter('computer'),
 	{
 		displayName: 'Location',
 		name: 'locationId',
 		type: 'resourceLocator',
 		default: { mode: 'list', value: '' },
-		displayOptions: { show: { resource: ['computer'], operation: ['getMany'] } },
+		displayOptions: {
+			show: { resource: ['computer'], operation: ['getMany'] },
+		},
 		modes: [
 			{
 				displayName: 'From List',
@@ -73,19 +86,16 @@ export const autoElevateProperties: INodeProperties[] = [
 	...paginationFields('computer'),
 
 	getAndListOperations('elevatedSession'),
-	idLocator(
-		'elevatedSession',
-		'Elevated Session',
-		'elevatedSessionId',
-		'searchElevatedSessions',
-	),
+	idLocator('elevatedSession', 'Elevated Session', 'elevatedSessionId', 'searchElevatedSessions'),
 	companyFilter('elevatedSession'),
 	{
 		displayName: 'Computer',
 		name: 'computerId',
 		type: 'resourceLocator',
 		default: { mode: 'list', value: '' },
-		displayOptions: { show: { resource: ['elevatedSession'], operation: ['getMany'] } },
+		displayOptions: {
+			show: { resource: ['elevatedSession'], operation: ['getMany'] },
+		},
 		modes: [
 			{
 				displayName: 'From List',
@@ -106,11 +116,14 @@ export const autoElevateProperties: INodeProperties[] = [
 			{ name: 'Active', value: 'active' },
 			{ name: 'Inactive', value: 'inactive' },
 		],
-		displayOptions: { show: { resource: ['elevatedSession'], operation: ['getMany'] } },
+		displayOptions: {
+			show: { resource: ['elevatedSession'], operation: ['getMany'] },
+		},
 	},
 	...paginationFields('elevatedSession'),
 
-	getManyOnly('elevationEvent', 'Get many elevation events'),
+	getAndListOperations('elevationEvent'),
+	idLocator('elevationEvent', 'Elevation Event', 'elevationEventId', 'searchElevationEvents'),
 	...dateRangeFields('elevationEvent'),
 	companyFilter('elevationEvent'),
 	...paginationFields('elevationEvent'),
@@ -122,10 +135,18 @@ export const autoElevateProperties: INodeProperties[] = [
 		noDataExpression: true,
 		displayOptions: { show: { resource: ['elevationRequest'] } },
 		options: [
-			{ name: 'Approve', value: 'approve', action: 'Approve an elevation request' },
+			{
+				name: 'Approve',
+				value: 'approve',
+				action: 'Approve an elevation request',
+			},
 			{ name: 'Deny', value: 'deny', action: 'Deny an elevation request' },
 			{ name: 'Get', value: 'get', action: 'Get an elevation request' },
-			{ name: 'Get Many', value: 'getMany', action: 'Get many elevation requests' },
+			{
+				name: 'Get Many',
+				value: 'getMany',
+				action: 'Get many elevation requests',
+			},
 		],
 		default: 'getMany',
 	},
@@ -148,8 +169,11 @@ export const autoElevateProperties: INodeProperties[] = [
 			{ name: 'Approved', value: 'APPROVED' },
 			{ name: 'Denied', value: 'DENIED' },
 			{ name: 'Pending', value: 'PENDING' },
+			{ name: 'Withdrawn', value: 'WITHDRAWN' },
 		],
-		displayOptions: { show: { resource: ['elevationRequest'], operation: ['getMany'] } },
+		displayOptions: {
+			show: { resource: ['elevationRequest'], operation: ['getMany'] },
+		},
 	},
 	{
 		displayName: 'Elevation Type',
@@ -161,16 +185,21 @@ export const autoElevateProperties: INodeProperties[] = [
 			{ name: 'Admin', value: 'admin' },
 			{ name: 'User', value: 'user' },
 		],
-		displayOptions: { show: { resource: ['elevationRequest'], operation: ['approve'] } },
+		displayOptions: {
+			show: { resource: ['elevationRequest'], operation: ['approve'] },
+		},
 	},
 	{
 		displayName: 'Duration (Minutes)',
 		name: 'durationInMinutes',
 		type: 'number',
 		default: 0,
-		typeOptions: { minValue: 0 },
-		description: 'For session requests. Leave at 0 to use the request default.',
-		displayOptions: { show: { resource: ['elevationRequest'], operation: ['approve'] } },
+		typeOptions: { minValue: 0, maxValue: 60 },
+		description:
+			'Required for elevated-session requests: 1 to 60 minutes (at least 10 for Addigy-managed Macs). Leave at 0 only for other request types.',
+		displayOptions: {
+			show: { resource: ['elevationRequest'], operation: ['approve'] },
+		},
 	},
 	{
 		displayName: 'Create Rule',
@@ -204,9 +233,21 @@ export const autoElevateProperties: INodeProperties[] = [
 	},
 	...paginationFields('elevationRequest'),
 
-	getManyOnly('elevationRule', 'Get many elevation rules'),
+	ruleOperations,
 	companyFilter('elevationRule'),
 	...paginationFields('elevationRule'),
+
+	{
+		displayName: 'Denial Reason',
+		name: 'denialReason',
+		type: 'string',
+		default: '',
+		description: 'Reason shown to the end user. Maximum 1000 characters.',
+		displayOptions: {
+			show: { resource: ['elevationRequest'], operation: ['deny'] },
+		},
+	},
+	...managementProperties,
 
 	getAndListOperations('location'),
 	idLocator('location', 'Location', 'locationId', 'searchLocations'),

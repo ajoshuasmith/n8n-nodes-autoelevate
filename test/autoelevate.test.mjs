@@ -47,7 +47,7 @@ test('uses the documented empty-body hash', () => {
 	);
 });
 
-test('maps every route in the published v1 beta specification', async () => {
+test('retains the original v1 resource families and approval actions', async () => {
 	const source = await readFile(
 		new URL('../nodes/AutoElevate/AutoElevate.node.ts', import.meta.url),
 		'utf8',
