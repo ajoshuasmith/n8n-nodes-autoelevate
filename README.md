@@ -237,6 +237,11 @@ Bug reports, feature requests, and pull requests are welcome in the [GitHub repo
 
 ## Version History
 
+### 0.2.0
+
+- Release the Partner API expansion tested in the 0.2.0 prereleases
+- Include the role-selector validation and execution-cancellation fixes
+
 ### 0.2.0-beta.3
 
 - Stop further API requests when an execution is canceled, including during rate-limit backoff
